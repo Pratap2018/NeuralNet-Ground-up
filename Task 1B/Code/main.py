@@ -72,7 +72,7 @@ def train(epochs,train_data,costFunction,optimizer,test_data,debug,destination_p
 	if save == True:
 		torch.save(net.state_dict(),'mode.pth')
 def accuracy(test_data):
-    net.eval()
+    net.eval().to(device)
     correcthit=0
     total=0
     accuracy=0
@@ -97,5 +97,5 @@ if __name__ == "__main__":
 	for parameter in net.parameters():
 		print(str(parameter.data.numpy().shape)+'\n')
 
-	train_model(dataset_path='./Data/fruits/',destination_path='./Data/',epochs=1,debug=True,save=True)
+	train_model(dataset_path='./Data/fruits/',destination_path='./Data/',epochs=1,debug=False,save=True)
 	
