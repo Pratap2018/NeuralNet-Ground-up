@@ -31,14 +31,14 @@ def train_model(dataset_path, debug=False, destination_path='', save=False,epoch
 		accuracy (torch.tensor): Train accuracy and validation accuracy.
 	"""
 	dframe,train_data,test_data=create_and_load_meta_csv_df('./Data/fruits','./Data/dataset',randomize=None,split=.8)
-	train_data=DataLoader(dataset=ImageDataset(data=train_data,transform = transforms.ToTensor()),batch_size=35)
-	test_data=DataLoader(dataset=ImageDataset(test_data,transforms.ToTensor()),batch_size=35)
+	train_data=DataLoader(dataset=ImageDataset(data=train_data,transform = transforms.ToTensor()),batch_size=32)
+	test_data=DataLoader(dataset=ImageDataset(test_data,transforms.ToTensor()),batch_size=32)
 	costFunction=nn.CrossEntropyLoss()
 	optimizer=optim.SGD(net.parameters(),lr=.001,momentum=0.9)
 	#print(train_data.dataset.data)
-	train(epochs,train_data=train_data,costFunction=costFunction,optimizer=optimizer,test_data=test_data,debug=debug,destination_path=destination_path,save=save)
+	acc,loss=train(epochs,train_data=train_data,costFunction=costFunction,optimizer=optimizer,test_data=test_data,debug=debug,destination_path=destination_path,save=save)
 
-	
+	return acc,loss
 
 
 
@@ -67,7 +67,7 @@ def train(epochs,train_data,costFunction,optimizer,test_data,debug,destination_p
 		plt.plot(losses,label='epoch'+str(epoch))
 		plt.legend(loc=1,mode='expanded')
 	plt.show()
-	return acc,loss.item()	
+	return acc,loss.item()/100	
 	
 	if save == True:
 		torch.save(net.state_dict(),'mode.pth')
@@ -97,5 +97,6 @@ if __name__ == "__main__":
 	for parameter in net.parameters():
 		print(str(parameter.data.numpy().shape)+'\n')
 
-	train_model(dataset_path='./Data/fruits/',destination_path='./Data/',epochs=1,debug=False,save=True)
-	
+	acc,loss=train_model(dataset_path='./Data/fruits/',destination_path='./Data/',epochs=1,debug=True,save=True)
+	print("accuracy :",acc)
+	print('loss : %.4f'%loss)
